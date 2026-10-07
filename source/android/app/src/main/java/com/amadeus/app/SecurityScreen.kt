@@ -42,7 +42,7 @@ fun SecurityScreen() {
     var scanned by remember { mutableStateOf(false) }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().systemBarsPadding().padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
