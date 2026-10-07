@@ -120,6 +120,7 @@ fun AppCard(app: AppRisk) {
             Text(app.name, fontWeight = FontWeight.Bold)
             Text("Risiko ${app.level} (skor ${app.score})", color = color)
             Text(app.packageName, fontSize = 11.sp)
+            Text("Pemasang: " + app.installer, fontSize = 11.sp)
             if (app.reasons.isNotEmpty()) {
                 Text(app.reasons.joinToString("\n") { "• $it" }, fontSize = 12.sp)
             }

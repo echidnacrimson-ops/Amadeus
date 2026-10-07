@@ -19,7 +19,8 @@ data class AppRisk(
     val packageName: String,
     val score: Int,
     val level: String,
-    val reasons: List<String>
+    val reasons: List<String>,
+    val installer: String
 )
 
 data class StatusItem(
@@ -91,7 +92,7 @@ object SecurityScanner {
     private fun levelOf(score: Int): String {
         return when {
             score >= 8 -> "TINGGI"
-            score >= 4 -> "SEDANG"
+            score >= 5 -> "SEDANG"
             else -> "RENDAH"
         }
     }
@@ -107,30 +108,37 @@ object SecurityScanner {
             if ((info.flags and ApplicationInfo.FLAG_SYSTEM) != 0) continue
             if (pkg.packageName == context.packageName) continue
 
-            var score = 0
             val reasons = mutableListOf<String>()
+            var permScore = 0
 
             val requested = pkg.requestedPermissions?.toSet() ?: emptySet()
             for ((perm, rule) in dangerousPermissions) {
                 if (perm in requested) {
-                    score += rule.first
+                    permScore += rule.first
                     reasons.add(rule.second)
                 }
             }
+            var score = minOf(permScore, 5)
 
             val installer = installerOf(pm, pkg.packageName)
-            if (installer == null || installer !in trustedInstallers) {
-                score += 3
+            val sideloaded = installer == null || installer !in trustedInstallers
+            if (sideloaded) {
+                score += 2
                 reasons.add("Dipasang dari luar toko aplikasi resmi")
+                val hasSms = requested.any { it.endsWith("_SMS") }
+                if (hasSms) {
+                    score += 3
+                    reasons.add("Kombinasi berisiko: akses SMS dari sumber tak dikenal")
+                }
             }
 
             if (pkg.packageName in accessibility) {
-                score += 4
+                score += 5
                 reasons.add("Layanan Aksesibilitas aktif (bisa membaca isi layar)")
             }
 
             if (pkg.packageName in admins) {
-                score += 4
+                score += 5
                 reasons.add("Menjadi administrator perangkat")
             }
 
@@ -140,7 +148,8 @@ object SecurityScanner {
                     packageName = pkg.packageName,
                     score = score,
                     level = levelOf(score),
-                    reasons = reasons
+                    reasons = reasons,
+                    installer = installer ?: "tidak diketahui"
                 )
             )
         }
