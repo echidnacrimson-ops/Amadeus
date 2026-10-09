@@ -46,7 +46,7 @@ object SecurityScanner {
         "android.permission.MANAGE_EXTERNAL_STORAGE" to Pair(2, "Meminta akses ke semua file")
     )
 
-    private val trustedInstallers = setOf(
+    val trustedInstallers = setOf(
         "com.android.vending",
         "com.sec.android.app.samsungapps",
         "com.huawei.appmarket",

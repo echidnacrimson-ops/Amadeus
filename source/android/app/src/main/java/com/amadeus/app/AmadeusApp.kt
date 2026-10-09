@@ -1,5 +1,6 @@
 package com.amadeus.app
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -23,27 +25,28 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AmadeusApp() {
     var tab by remember { mutableStateOf(0) }
-    val titles = listOf("Beranda", "Keamanan", "Perangkat", "Pembersih")
-    val tight = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
+    val titles = listOf("Beranda", "Keamanan", "Perangkat", "Pembersih", "Antivirus")
+    val tight = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             titles.forEachIndexed { index, title ->
                 if (index == tab) {
                     Button(
                         onClick = { tab = index },
-                        modifier = Modifier.weight(1f),
                         contentPadding = tight
-                    ) { Text(title, fontSize = 11.sp, maxLines = 1) }
+                    ) { Text(title, fontSize = 12.sp, maxLines = 1) }
                 } else {
                     OutlinedButton(
                         onClick = { tab = index },
-                        modifier = Modifier.weight(1f),
                         contentPadding = tight
-                    ) { Text(title, fontSize = 11.sp, maxLines = 1) }
+                    ) { Text(title, fontSize = 12.sp, maxLines = 1) }
                 }
             }
         }
@@ -51,7 +54,8 @@ fun AmadeusApp() {
             0 -> HomeScreen(onNavigate = { tab = it })
             1 -> SecurityScreen()
             2 -> DeviceScreen()
-            else -> CleanerScreen()
+            3 -> CleanerScreen()
+            else -> AntivirusScreen()
         }
     }
 }
